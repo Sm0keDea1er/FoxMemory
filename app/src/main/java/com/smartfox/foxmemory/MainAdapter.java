@@ -34,6 +34,8 @@ public class MainAdapter extends RecyclerView.Adapter<MainAdapter.ViewHolder> im
         dbHandler = new DbHandler(context);
     }
 
+
+
     /**
      * Создание новых View и ViewHolder элемента списка, которые впоследствии могут переиспользоваться.
      */
