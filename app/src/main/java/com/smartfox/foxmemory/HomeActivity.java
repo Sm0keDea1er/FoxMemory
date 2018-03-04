@@ -7,15 +7,16 @@ import android.support.v7.widget.DividerItemDecoration;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.helper.ItemTouchHelper;
-import android.util.Log;
 import android.view.View;
 
 
-import com.smartfox.foxmemory.data.DbHandler;
-import com.smartfox.foxmemory.data.Task;
+import com.smartfox.foxmemory.db.DbHandler;
+import com.smartfox.foxmemory.db.models.TaskRealmModel;
 import com.smartfox.foxmemory.touchhelper.SDTouchHelperCallback;
 
 import java.util.List;
+
+import io.realm.Realm;
 
 public class HomeActivity extends AppCompatActivity {
 
@@ -24,27 +25,19 @@ public class HomeActivity extends AppCompatActivity {
     private LinearLayoutManager layoutManager;
     FloatingActionButton fab;
 
-    DbHandler dbHandler;
+    private Realm mRealm;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_home);
 
+        mRealm = Realm.getDefaultInstance();
+
         fab = (FloatingActionButton) findViewById(R.id.fab);
 
-        dbHandler = new DbHandler(this);
 
-
-        List<Task> test = dbHandler.getAllTasks();
-
-        for (Task task : test) {
-            Log.d("Sd",
-                    "id: " + task.get_id() +
-                            " name: " + task.get_name() +
-                            " description: " + task.get_description() +
-                            " priority: " + task.get_priority());
-        }
+        List<TaskRealmModel> test = dbHandler.getAllTasks();
 
         homeRecyclerView = (RecyclerView) findViewById(R.id.home_recycle_view);
 
@@ -74,7 +67,7 @@ public class HomeActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
 
-              ((MainAdapter) homeAdapter).addItem();
+                ((MainAdapter) homeAdapter).addItem();
 
             }
         });
