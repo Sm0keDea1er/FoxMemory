@@ -3,7 +3,7 @@ package com.smartfox.foxmemory.touchhelper;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.helper.ItemTouchHelper;
 
-import com.smartfox.foxmemory.MainAdapter;
+import com.smartfox.foxmemory.HomeAdapter;
 
 /**
  * Created by SmartFox on 10-Feb-18.
@@ -12,9 +12,9 @@ import com.smartfox.foxmemory.MainAdapter;
 public class SDTouchHelperCallback extends ItemTouchHelper.Callback {
 
 
-    private final MainAdapter mAdapter;
+    private final HomeAdapter mAdapter;
 
-    public SDTouchHelperCallback(MainAdapter adapter) {
+    public SDTouchHelperCallback(HomeAdapter adapter) {
         mAdapter = adapter;
     }
 

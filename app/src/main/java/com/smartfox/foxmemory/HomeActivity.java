@@ -9,14 +9,12 @@ import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.helper.ItemTouchHelper;
 import android.view.View;
 
-
-import com.smartfox.foxmemory.db.DbHandler;
 import com.smartfox.foxmemory.db.models.TaskRealmModel;
 import com.smartfox.foxmemory.touchhelper.SDTouchHelperCallback;
 
-import java.util.List;
-
 import io.realm.Realm;
+import io.realm.RealmQuery;
+import io.realm.RealmResults;
 
 public class HomeActivity extends AppCompatActivity {
 
@@ -25,20 +23,17 @@ public class HomeActivity extends AppCompatActivity {
     private LinearLayoutManager layoutManager;
     FloatingActionButton fab;
 
-    private Realm mRealm;
+    private Realm realm;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_home);
 
-        mRealm = Realm.getDefaultInstance();
+        realm = Realm.getDefaultInstance();
+        RealmQuery<TaskRealmModel> query = realm.where(TaskRealmModel.class);
 
         fab = (FloatingActionButton) findViewById(R.id.fab);
-
-
-        List<TaskRealmModel> test = dbHandler.getAllTasks();
-
         homeRecyclerView = (RecyclerView) findViewById(R.id.home_recycle_view);
 
         // use this setting to improve performance if you know that changes
@@ -53,13 +48,13 @@ public class HomeActivity extends AppCompatActivity {
                 layoutManager.getOrientation());
         homeRecyclerView.addItemDecoration(dividerItemDecoration);
 
+        RealmResults<TaskRealmModel> tasks = query.findAll();
 
-        // specify an adapter (see also next example)
-        homeAdapter = new MainAdapter(dbHandler.getAllTasks(), this);
+        homeAdapter = new HomeAdapter(tasks, realm);
         homeRecyclerView.setAdapter(homeAdapter);
 
 
-        ItemTouchHelper.Callback callback = new SDTouchHelperCallback((MainAdapter) homeAdapter);
+        ItemTouchHelper.Callback callback = new SDTouchHelperCallback((HomeAdapter) homeAdapter);
         ItemTouchHelper touchHelper = new ItemTouchHelper(callback);
         touchHelper.attachToRecyclerView(homeRecyclerView);
 
@@ -67,12 +62,16 @@ public class HomeActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
 
-                ((MainAdapter) homeAdapter).addItem();
-
+                ((HomeAdapter) homeAdapter).addItem();
             }
         });
     }
 
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
 
+        realm.close();
+    }
 }
 // change

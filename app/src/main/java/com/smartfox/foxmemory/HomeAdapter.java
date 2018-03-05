@@ -7,13 +7,13 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
-import com.smartfox.foxmemory.db.DbHandler;
 import com.smartfox.foxmemory.db.models.TaskRealmModel;
 import com.smartfox.foxmemory.touchhelper.ItemTouchHelperAdapter;
 
 import java.util.Collections;
 import java.util.Random;
 
+import io.realm.Realm;
 import io.realm.RealmChangeListener;
 import io.realm.RealmResults;
 
@@ -21,18 +21,17 @@ import io.realm.RealmResults;
  * Created by SmartFox on 09-Feb-18.
  */
 
-public class MainAdapter extends RecyclerView.Adapter<MainAdapter.ViewHolder> implements ItemTouchHelperAdapter, RealmChangeListener<TaskRealmModel> {
+public class HomeAdapter extends RecyclerView.Adapter<HomeAdapter.ViewHolder> implements ItemTouchHelperAdapter, RealmChangeListener<TaskRealmModel> {
 
 
     private final RealmResults<TaskRealmModel> tasks;
+    private Realm realm;
 
 
-
-    public MainAdapter(RealmResults<TaskRealmModel> tasks) {
-
+    public HomeAdapter(RealmResults<TaskRealmModel> tasks, Realm realm) {
+        this.realm = realm;
         this.tasks = tasks;
     }
-
 
 
     /**
@@ -49,13 +48,13 @@ public class MainAdapter extends RecyclerView.Adapter<MainAdapter.ViewHolder> im
      * Заполнение виджетов View данными из элемента списка с номером i
      */
     @Override
-    public void onBindViewHolder(MainAdapter.ViewHolder holder, final int position) {
+    public void onBindViewHolder(HomeAdapter.ViewHolder holder, final int position) {
 
         TaskRealmModel task = tasks.get(position);
-        holder.id.setText("id: " + String.valueOf(task.get_id()));
+        holder.id.setText(String.valueOf(task.getId()));
         holder.name.setText(task.getName());
         holder.description.setText(task.getDescription());
-        holder.priority.setText("priority: " + String.valueOf(task.getPriority()));
+        holder.priority.setText(String.valueOf(task.getPriority()));
     }
 
     @Override
@@ -67,10 +66,10 @@ public class MainAdapter extends RecyclerView.Adapter<MainAdapter.ViewHolder> im
     @Override
     public void onItemDismiss(int position) {
 
-        dbHandler.delete(tasks.get(position).get_id());
+        realm.beginTransaction();
+        tasks.get(position).deleteFromRealm();
+        realm.commitTransaction();
 
-        notifyItemRemoved(position);
-        notifyItemRangeChanged(position, tasks.size());
         notifyDataSetChanged();
 
 
@@ -89,23 +88,23 @@ public class MainAdapter extends RecyclerView.Adapter<MainAdapter.ViewHolder> im
                 Collections.swap(tasks, i, i - 1);
             }
         }
-
-        dbHandler.swap(tasks.get(fromPosition), tasks.get(toPosition));
-        notifyItemMoved(fromPosition, toPosition);
-
     }
 
-    public void addItem(){
+    public void addItem() {
 
-        TaskRealmModel task = new TaskRealmModel();
+        realm.beginTransaction();
+        Number maxValue = realm.where(TaskRealmModel.class).max("id");
+        long pk = (maxValue != null) ? maxValue.longValue() + 1 : 0;
+        TaskRealmModel task = realm.createObject(TaskRealmModel.class, pk++);
+
+
+
         task.setName("DO IT");
         task.setDescription("simple description");
 
         Random ran = new Random();
         task.setPriority(ran.nextInt(9) + 1);
-
-        dbHandler.addTask(task);
-        tasks = dbHandler.getAllTasks();
+        realm.commitTransaction();
 
         notifyDataSetChanged();
     }
