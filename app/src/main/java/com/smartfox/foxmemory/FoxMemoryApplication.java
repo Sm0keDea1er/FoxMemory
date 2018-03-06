@@ -2,7 +2,7 @@ package com.smartfox.foxmemory;
 
 import android.app.Application;
 
-import com.smartfox.foxmemory.db.migration.CustomMigration;
+import com.smartfox.foxmemory.db.migration.RealmMigration;
 
 import io.realm.Realm;
 import io.realm.RealmConfiguration;
@@ -21,7 +21,7 @@ public class FoxMemoryApplication extends Application {
         RealmConfiguration configuration = new RealmConfiguration.Builder()
                 .name("FoxDB")
                 .schemaVersion(0)
-                .migration(new CustomMigration())
+                .migration(new RealmMigration())
                 .build();
         Realm.setDefaultConfiguration(configuration);
     }

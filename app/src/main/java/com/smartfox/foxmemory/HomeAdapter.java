@@ -7,7 +7,8 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
-import com.smartfox.foxmemory.db.models.TaskRealmModel;
+import com.smartfox.foxmemory.db.models.Task;
+import com.smartfox.foxmemory.db.models.TasksList;
 import com.smartfox.foxmemory.touchhelper.ItemTouchHelperAdapter;
 
 import java.util.Collections;
@@ -15,20 +16,21 @@ import java.util.Random;
 
 import io.realm.Realm;
 import io.realm.RealmChangeListener;
+import io.realm.RealmList;
 import io.realm.RealmResults;
 
 /**
  * Created by SmartFox on 09-Feb-18.
  */
 
-public class HomeAdapter extends RecyclerView.Adapter<HomeAdapter.ViewHolder> implements ItemTouchHelperAdapter, RealmChangeListener<TaskRealmModel> {
+public class HomeAdapter extends RecyclerView.Adapter<HomeAdapter.ViewHolder> implements ItemTouchHelperAdapter, RealmChangeListener<TasksList> {
 
 
-    private final RealmResults<TaskRealmModel> tasks;
+    private final RealmList<Task> tasks;
     private Realm realm;
 
 
-    public HomeAdapter(RealmResults<TaskRealmModel> tasks, Realm realm) {
+    public HomeAdapter(RealmList<Task> tasks, Realm realm) {
         this.realm = realm;
         this.tasks = tasks;
     }
@@ -50,8 +52,7 @@ public class HomeAdapter extends RecyclerView.Adapter<HomeAdapter.ViewHolder> im
     @Override
     public void onBindViewHolder(HomeAdapter.ViewHolder holder, final int position) {
 
-        TaskRealmModel task = tasks.get(position);
-        holder.id.setText(String.valueOf(task.getId()));
+        Task task = tasks.get(position);
         holder.name.setText(task.getName());
         holder.description.setText(task.getDescription());
         holder.priority.setText(String.valueOf(task.getPriority()));
@@ -92,25 +93,12 @@ public class HomeAdapter extends RecyclerView.Adapter<HomeAdapter.ViewHolder> im
 
     public void addItem() {
 
-        realm.beginTransaction();
-        Number maxValue = realm.where(TaskRealmModel.class).max("id");
-        long pk = (maxValue != null) ? maxValue.longValue() + 1 : 0;
-        TaskRealmModel task = realm.createObject(TaskRealmModel.class, pk++);
 
 
-
-        task.setName("DO IT");
-        task.setDescription("simple description");
-
-        Random ran = new Random();
-        task.setPriority(ran.nextInt(9) + 1);
-        realm.commitTransaction();
-
-        notifyDataSetChanged();
     }
 
     @Override
-    public void onChange(TaskRealmModel task) {
+    public void onChange(TasksList task) {
         notifyDataSetChanged();
     }
 

@@ -3,15 +3,13 @@ package com.smartfox.foxmemory.db.migration;
 import java.util.Locale;
 
 import io.realm.DynamicRealm;
-import io.realm.RealmMigration;
 import io.realm.RealmSchema;
 
 /**
- * Created by SmartFox on 04.03.2018.
+ * Created by SmartFox on 06.03.2018.
  */
 
-public class CustomMigration implements RealmMigration {
-
+public class RealmMigration implements io.realm.RealmMigration {
     @Override
     public void migrate(DynamicRealm realm, long oldVersion, long newVersion) {
         RealmSchema schema = realm.getSchema();
@@ -21,9 +19,9 @@ public class CustomMigration implements RealmMigration {
             oldVersion++;
         }
 
+
         if (oldVersion < newVersion) {
             throw new IllegalStateException(String.format(Locale.US, "Migration missing from v%d to v%d", oldVersion, newVersion));
         }
-
     }
 }

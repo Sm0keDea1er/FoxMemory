@@ -9,10 +9,13 @@ import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.helper.ItemTouchHelper;
 import android.view.View;
 
-import com.smartfox.foxmemory.db.models.TaskRealmModel;
+import com.smartfox.foxmemory.db.DbService;
+import com.smartfox.foxmemory.db.models.Task;
+import com.smartfox.foxmemory.db.models.TasksList;
 import com.smartfox.foxmemory.touchhelper.SDTouchHelperCallback;
 
 import io.realm.Realm;
+import io.realm.RealmList;
 import io.realm.RealmQuery;
 import io.realm.RealmResults;
 
@@ -30,17 +33,19 @@ public class HomeActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_home);
 
+
         realm = Realm.getDefaultInstance();
-        RealmQuery<TaskRealmModel> query = realm.where(TaskRealmModel.class);
+
+        DbService.onlyOneTable(realm);
+        TasksList list = realm.where(TasksList.class).findFirst();
+        final String tableId = list.getId();
+        RealmList<Task>  tasks = list.getTasks();
 
         fab = (FloatingActionButton) findViewById(R.id.fab);
         homeRecyclerView = (RecyclerView) findViewById(R.id.home_recycle_view);
 
-        // use this setting to improve performance if you know that changes
-        // in content do not change the layout size of the RecyclerView
-        homeRecyclerView.setHasFixedSize(true);
 
-        // use a linear layout manager
+        homeRecyclerView.setHasFixedSize(true);
         layoutManager = new LinearLayoutManager(this);
         homeRecyclerView.setLayoutManager(layoutManager);
 
@@ -48,7 +53,6 @@ public class HomeActivity extends AppCompatActivity {
                 layoutManager.getOrientation());
         homeRecyclerView.addItemDecoration(dividerItemDecoration);
 
-        RealmResults<TaskRealmModel> tasks = query.findAll();
 
         homeAdapter = new HomeAdapter(tasks, realm);
         homeRecyclerView.setAdapter(homeAdapter);
@@ -62,7 +66,8 @@ public class HomeActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
 
-                ((HomeAdapter) homeAdapter).addItem();
+                DbService.save(realm, tableId);
+                homeAdapter.notifyDataSetChanged();
             }
         });
     }

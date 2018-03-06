@@ -1,29 +1,28 @@
 package com.smartfox.foxmemory.db.models;
 
+import java.util.Date;
+
 import io.realm.RealmObject;
-import io.realm.annotations.PrimaryKey;
 import io.realm.annotations.Required;
 
 /**
- * Created by SmartFox on 01.03.2018.
+ * Created by SmartFox on 06.03.2018.
  */
 
-public class TaskRealmModel extends RealmObject {
-
-    @PrimaryKey
-    private long id = 0;
+public class Task extends RealmObject {
 
     @Required
     private String name;
     private String description;
     private int priority;
+    private Date createdAt = new Date();
 
-    public long getId() {
-        return id;
+    public Date getCreatedAt() {
+        return createdAt;
     }
 
-    public void setId(long id) {
-        this.id = id;
+    public void setCreatedAt(Date createdAt) {
+        this.createdAt = createdAt;
     }
 
     public String getName() {
