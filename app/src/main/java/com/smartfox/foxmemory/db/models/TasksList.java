@@ -5,13 +5,16 @@ import java.util.UUID;
 import io.realm.RealmList;
 import io.realm.RealmObject;
 import io.realm.annotations.PrimaryKey;
-import io.realm.annotations.Required;
 
 /**
  * Created by SmartFox on 01.03.2018.
  */
 
 public class TasksList extends RealmObject {
+
+    public static final String ID = "id";
+    public static final String LIST = "tasks";
+
 
     @PrimaryKey
     private String  id = UUID.randomUUID().toString();

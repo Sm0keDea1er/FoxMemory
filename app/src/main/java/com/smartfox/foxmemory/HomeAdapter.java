@@ -12,12 +12,10 @@ import com.smartfox.foxmemory.db.models.TasksList;
 import com.smartfox.foxmemory.touchhelper.ItemTouchHelperAdapter;
 
 import java.util.Collections;
-import java.util.Random;
 
 import io.realm.Realm;
 import io.realm.RealmChangeListener;
 import io.realm.RealmList;
-import io.realm.RealmResults;
 
 /**
  * Created by SmartFox on 09-Feb-18.
@@ -80,6 +78,9 @@ public class HomeAdapter extends RecyclerView.Adapter<HomeAdapter.ViewHolder> im
 
     @Override
     public void onItemMove(int fromPosition, int toPosition) {
+
+
+        realm.beginTransaction();
         if (fromPosition < toPosition) {
             for (int i = fromPosition; i < toPosition; i++) {
                 Collections.swap(tasks, i, i + 1);
@@ -89,13 +90,12 @@ public class HomeAdapter extends RecyclerView.Adapter<HomeAdapter.ViewHolder> im
                 Collections.swap(tasks, i, i - 1);
             }
         }
-    }
+        realm.commitTransaction();
 
-    public void addItem() {
-
-
+        notifyDataSetChanged();
 
     }
+
 
     @Override
     public void onChange(TasksList task) {

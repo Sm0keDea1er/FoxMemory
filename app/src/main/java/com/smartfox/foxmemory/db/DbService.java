@@ -1,17 +1,13 @@
 package com.smartfox.foxmemory.db;
 
-import com.smartfox.foxmemory.R;
 import com.smartfox.foxmemory.db.models.Task;
 import com.smartfox.foxmemory.db.models.TasksList;
 
 import java.util.Random;
 import java.util.UUID;
 
-import io.realm.Case;
 import io.realm.Realm;
 import io.realm.RealmList;
-import io.realm.RealmQuery;
-import io.realm.RealmResults;
 
 /**
  * Created by SmartFox on 06.03.2018.
@@ -31,7 +27,7 @@ public class DbService {
 
         realm.beginTransaction();
         TasksList list = realm.createObject(TasksList.class, UUID.randomUUID().toString());
-        list.setTasks(new RealmList<Task>());
+        list.setTasks(new RealmList<>());
         realm.commitTransaction();
     }
 
@@ -39,7 +35,7 @@ public class DbService {
 
         realm.beginTransaction();
         Task task = realm.createObject(Task.class);
-        TasksList list = realm.where(TasksList.class).equalTo("id", id).findFirst();
+        TasksList list = realm.where(TasksList.class).equalTo(TasksList.ID, id).findFirst();
         RealmList<Task> tasks = list.getTasks();
 
         task.setName("Name");

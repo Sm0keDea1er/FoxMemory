@@ -1,8 +1,8 @@
 package com.smartfox.foxmemory;
 
+import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v7.app.AppCompatActivity;
-import android.os.Bundle;
 import android.support.v7.widget.DividerItemDecoration;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -16,8 +16,6 @@ import com.smartfox.foxmemory.touchhelper.SDTouchHelperCallback;
 
 import io.realm.Realm;
 import io.realm.RealmList;
-import io.realm.RealmQuery;
-import io.realm.RealmResults;
 
 public class HomeActivity extends AppCompatActivity {
 
@@ -39,7 +37,7 @@ public class HomeActivity extends AppCompatActivity {
         DbService.onlyOneTable(realm);
         TasksList list = realm.where(TasksList.class).findFirst();
         final String tableId = list.getId();
-        RealmList<Task>  tasks = list.getTasks();
+        RealmList<Task> tasks = list.getTasks();
 
         fab = (FloatingActionButton) findViewById(R.id.fab);
         homeRecyclerView = (RecyclerView) findViewById(R.id.home_recycle_view);
@@ -49,8 +47,7 @@ public class HomeActivity extends AppCompatActivity {
         layoutManager = new LinearLayoutManager(this);
         homeRecyclerView.setLayoutManager(layoutManager);
 
-        DividerItemDecoration dividerItemDecoration = new DividerItemDecoration(homeRecyclerView.getContext(),
-                layoutManager.getOrientation());
+        DividerItemDecoration dividerItemDecoration = new DividerItemDecoration(homeRecyclerView.getContext(), layoutManager.getOrientation());
         homeRecyclerView.addItemDecoration(dividerItemDecoration);
 
 
@@ -79,4 +76,3 @@ public class HomeActivity extends AppCompatActivity {
         realm.close();
     }
 }
-// change

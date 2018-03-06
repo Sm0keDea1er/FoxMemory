@@ -11,6 +11,11 @@ import io.realm.annotations.Required;
 
 public class Task extends RealmObject {
 
+    public static final String NAME = "name";
+    public static final String DESCRIPTION = "description";
+    public static final String PRIORITY = "priority";
+    public static final String CREATED_AT = "createdAt";
+
     @Required
     private String name;
     private String description;
