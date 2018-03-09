@@ -114,10 +114,10 @@ public class HomeAdapter extends RecyclerView.Adapter<HomeAdapter.ViewHolder> im
 
         public ViewHolder(View itemView) {
             super(itemView);
-            id = (TextView) itemView.findViewById(R.id.item_id);
-            name = (TextView) itemView.findViewById(R.id.item_name);
-            description = (TextView) itemView.findViewById(R.id.item_description);
-            priority = (TextView) itemView.findViewById(R.id.item_priority);
+            id = itemView.findViewById(R.id.item_id);
+            name = itemView.findViewById(R.id.item_name);
+            description = itemView.findViewById(R.id.item_description);
+            priority = itemView.findViewById(R.id.item_priority);
         }
     }
 }

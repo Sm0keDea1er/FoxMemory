@@ -7,7 +7,6 @@ import android.support.v7.widget.DividerItemDecoration;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.helper.ItemTouchHelper;
-import android.view.View;
 
 import com.smartfox.foxmemory.db.DbService;
 import com.smartfox.foxmemory.db.models.Task;
@@ -31,6 +30,9 @@ public class HomeActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_home);
 
+        fab = findViewById(R.id.fab);
+        homeRecyclerView = findViewById(R.id.home_recycle_view);
+
 
         realm = Realm.getDefaultInstance();
 
@@ -38,9 +40,6 @@ public class HomeActivity extends AppCompatActivity {
         TasksList list = realm.where(TasksList.class).findFirst();
         final String tableId = list.getId();
         RealmList<Task> tasks = list.getTasks();
-
-        fab = (FloatingActionButton) findViewById(R.id.fab);
-        homeRecyclerView = (RecyclerView) findViewById(R.id.home_recycle_view);
 
 
         homeRecyclerView.setHasFixedSize(true);
@@ -59,13 +58,9 @@ public class HomeActivity extends AppCompatActivity {
         ItemTouchHelper touchHelper = new ItemTouchHelper(callback);
         touchHelper.attachToRecyclerView(homeRecyclerView);
 
-        fab.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-
-                DbService.save(realm, tableId);
-                homeAdapter.notifyDataSetChanged();
-            }
+        fab.setOnClickListener(v -> {
+            DbService.save(realm, tableId);
+            homeAdapter.notifyDataSetChanged();
         });
     }
 
