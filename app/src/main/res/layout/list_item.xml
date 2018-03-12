@@ -21,9 +21,8 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="test text name"
-            android:textColor="#000"
+            android:textColor="@color/colorTextBlack"
             android:textSize="16sp" />
-
 
 
         <TextView
@@ -32,7 +31,8 @@
             android:layout_height="wrap_content"
             android:layout_marginLeft="8dp"
             android:layout_marginStart="8dp"
-            android:text="test description" />
+            android:text="test description"
+            android:textColor="@color/colorTextGray" />
 
     </LinearLayout>
 
@@ -41,22 +41,22 @@
         android:layout_width="0dp"
         android:layout_height="match_parent"
         android:layout_weight="1"
-        android:text="pri"
-
         android:gravity="end|center_vertical"
+        android:paddingEnd="16dp"
         android:paddingRight="16dp"
-        android:paddingEnd="16dp" />
+        android:text="pri"
+        android:textColor="@color/colorTextGray" />
 
     <TextView
         android:id="@+id/item_id"
         android:layout_width="0dp"
         android:layout_height="match_parent"
         android:layout_weight="1"
-        android:text="id"
-
         android:gravity="end|center_vertical"
+        android:paddingEnd="16dp"
         android:paddingRight="16dp"
-        android:paddingEnd="16dp" />
+        android:text="id"
+        android:textColor="@color/colorTextGray" />
 
 
 </LinearLayout>

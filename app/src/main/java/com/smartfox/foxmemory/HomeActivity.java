@@ -10,18 +10,15 @@ import android.support.v7.widget.helper.ItemTouchHelper;
 
 import com.smartfox.foxmemory.db.DbService;
 import com.smartfox.foxmemory.db.models.Task;
-import com.smartfox.foxmemory.db.models.TasksList;
-import com.smartfox.foxmemory.touchhelper.SDTouchHelperCallback;
+import com.smartfox.foxmemory.touchhelper.SimpleItemTouchHelperCallback;
 
 import io.realm.Realm;
-import io.realm.RealmList;
+import io.realm.Sort;
 
 public class HomeActivity extends AppCompatActivity {
 
-    RecyclerView homeRecyclerView;
-    private RecyclerView.Adapter homeAdapter;
-    private LinearLayoutManager layoutManager;
-    FloatingActionButton fab;
+    private FloatingActionButton fab;
+    private RecyclerView recyclerView;
 
     private Realm realm;
 
@@ -31,36 +28,27 @@ public class HomeActivity extends AppCompatActivity {
         setContentView(R.layout.activity_home);
 
         fab = findViewById(R.id.fab);
-        homeRecyclerView = findViewById(R.id.home_recycle_view);
-
+        recyclerView = findViewById(R.id.recycler_view);
 
         realm = Realm.getDefaultInstance();
 
-        DbService.onlyOneTable(realm);
-        TasksList list = realm.where(TasksList.class).findFirst();
-        final String tableId = list.getId();
-        RealmList<Task> tasks = list.getTasks();
 
+        RecyclerView.LayoutManager layoutManager = new LinearLayoutManager(this);
+        TaskAdapter taskAdapter = new TaskAdapter(this, DbService.getListTasks(realm), realm);
+        recyclerView.addItemDecoration(new DividerItemDecoration(this, DividerItemDecoration.VERTICAL));
+        recyclerView.setLayoutManager(layoutManager);
+        recyclerView.setAdapter(taskAdapter);
 
-        homeRecyclerView.setHasFixedSize(true);
-        layoutManager = new LinearLayoutManager(this);
-        homeRecyclerView.setLayoutManager(layoutManager);
-
-        DividerItemDecoration dividerItemDecoration = new DividerItemDecoration(homeRecyclerView.getContext(), layoutManager.getOrientation());
-        homeRecyclerView.addItemDecoration(dividerItemDecoration);
-
-
-        homeAdapter = new HomeAdapter(tasks, realm);
-        homeRecyclerView.setAdapter(homeAdapter);
-
-
-        ItemTouchHelper.Callback callback = new SDTouchHelperCallback((HomeAdapter) homeAdapter);
+        ItemTouchHelper.Callback callback = new SimpleItemTouchHelperCallback(taskAdapter);
         ItemTouchHelper touchHelper = new ItemTouchHelper(callback);
-        touchHelper.attachToRecyclerView(homeRecyclerView);
+        touchHelper.attachToRecyclerView(recyclerView);
 
         fab.setOnClickListener(v -> {
-            DbService.save(realm, tableId);
-            homeAdapter.notifyDataSetChanged();
+
+            DbService.save(realm);
+            Task task = realm.where(Task.class).findAll().sort(Task.CREATED_AT, Sort.DESCENDING).first();
+            taskAdapter.addTask(task);
+            layoutManager.smoothScrollToPosition(recyclerView, null, taskAdapter.getItemCount() - 1);
         });
     }
 
@@ -68,6 +56,8 @@ public class HomeActivity extends AppCompatActivity {
     protected void onDestroy() {
         super.onDestroy();
 
-        realm.close();
+        if (realm != null)
+            realm.close();
+        realm = null;
     }
 }
