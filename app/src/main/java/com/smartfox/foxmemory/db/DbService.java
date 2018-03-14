@@ -28,6 +28,7 @@ public class DbService {
             Random ran = new Random();
             task.setPriority(ran.nextInt(9) + 1);
             task.setCreatedAt(System.currentTimeMillis());
+            task.setComplete(false);
             onlyOneList(realm).add(task);
         });
     }

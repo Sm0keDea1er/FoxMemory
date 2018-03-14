@@ -99,13 +99,14 @@ public class TaskAdapter extends RecyclerView.Adapter<TaskAdapter.TaskViewHolder
 
     @Override
     public void onItemMoved() {
-
         realm.executeTransaction(realm1 -> {
             RealmList<Task> list = DbService.onlyOneList(realm);
             list.clear();
             list.addAll(tasks);
-        });
+    });
+
     }
+
 
 
     public void addTask(Task task) {

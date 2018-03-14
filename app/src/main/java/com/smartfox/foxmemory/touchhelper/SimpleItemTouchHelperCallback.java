@@ -1,7 +1,10 @@
 package com.smartfox.foxmemory.touchhelper;
 
+import android.graphics.Canvas;
+import android.os.Build;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.helper.ItemTouchHelper;
+import android.util.Log;
 
 /**
  * Created by SmartFox on 10.03.2018.
@@ -31,9 +34,32 @@ public class SimpleItemTouchHelperCallback extends ItemTouchHelper.Callback {
 
         // Set movement flags based on the layout manager
         final int dragFlags = ItemTouchHelper.UP | ItemTouchHelper.DOWN;
-        final int swipeFlags = ItemTouchHelper.END;
+        final int swipeFlags = ItemTouchHelper.END | ItemTouchHelper.START;
+
         return makeMovementFlags(dragFlags, swipeFlags);
     }
+
+    @Override
+    public void onSwiped(RecyclerView.ViewHolder viewHolder, int direction) {
+
+        mAdapter.onItemDismiss(viewHolder.getAdapterPosition());
+
+        if (direction == 32){
+            Log.d("SDS","RIGHT");
+
+            viewHolder.itemView.animate().translationX(20).start();
+            viewHolder.itemView.setTranslationX(20);
+        }
+        if (direction == 16) {
+            Log.d("SDS","LEFT");
+
+            viewHolder.itemView.animate().translationX(-20).start();
+            viewHolder.itemView.setTranslationX(-20);
+        }
+
+    }
+
+
 
     @Override
     public boolean onMove(RecyclerView recyclerView, RecyclerView.ViewHolder viewHolder, RecyclerView.ViewHolder target) {
@@ -45,15 +71,25 @@ public class SimpleItemTouchHelperCallback extends ItemTouchHelper.Callback {
     }
 
     @Override
-    public void onSwiped(RecyclerView.ViewHolder viewHolder, int direction) {
-
-        mAdapter.onItemDismiss(viewHolder.getAdapterPosition());
-    }
-
-    @Override
     public void clearView(RecyclerView recyclerView, RecyclerView.ViewHolder viewHolder) {
         super.clearView(recyclerView, viewHolder);
 
         mAdapter.onItemMoved();
+    }
+
+    @Override
+    public void onChildDraw(Canvas c, RecyclerView recyclerView, RecyclerView.ViewHolder viewHolder, float dX, float dY, int actionState, boolean isCurrentlyActive) {
+        super.onChildDraw(c, recyclerView, viewHolder, dX, dY, actionState, isCurrentlyActive);
+
+        viewHolder.itemView.setTranslationX(0);
+        viewHolder.itemView.setTranslationY(dX*0.5f);
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP && actionState == ItemTouchHelper.ACTION_STATE_SWIPE) {
+            viewHolder.itemView.setElevation(0);
+        }
+
+
+
+
     }
 }
