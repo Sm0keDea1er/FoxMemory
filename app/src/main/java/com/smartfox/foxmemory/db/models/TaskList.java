@@ -15,6 +15,8 @@ public class TaskList extends RealmObject {
     public static final String CREATED_AT = "createdAt";
     public static final String NAME = "name";
 
+
+
     @PrimaryKey
     private String id;
     private String name;
@@ -52,4 +54,5 @@ public class TaskList extends RealmObject {
     public void setList(RealmList<Task> list) {
         this.list = list;
     }
+
 }

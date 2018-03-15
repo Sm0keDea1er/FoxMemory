@@ -118,10 +118,12 @@ public class TaskAdapter extends RecyclerView.Adapter<TaskAdapter.TaskViewHolder
     public class TaskViewHolder extends RecyclerView.ViewHolder {
 
         TextView name, description, id, priority;
+        public View line;
 
         public TaskViewHolder(View itemView) {
             super(itemView);
 
+            line = itemView.findViewById(R.id.item_line);
             name = itemView.findViewById(R.id.item_name);
             description = itemView.findViewById(R.id.item_description);
             priority = itemView.findViewById(R.id.item_priority);

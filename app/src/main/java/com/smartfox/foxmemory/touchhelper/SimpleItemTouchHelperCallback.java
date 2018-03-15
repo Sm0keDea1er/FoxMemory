@@ -1,10 +1,11 @@
 package com.smartfox.foxmemory.touchhelper;
 
 import android.graphics.Canvas;
-import android.os.Build;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.helper.ItemTouchHelper;
 import android.util.Log;
+
+import com.smartfox.foxmemory.TaskAdapter;
 
 /**
  * Created by SmartFox on 10.03.2018.
@@ -81,12 +82,7 @@ public class SimpleItemTouchHelperCallback extends ItemTouchHelper.Callback {
     public void onChildDraw(Canvas c, RecyclerView recyclerView, RecyclerView.ViewHolder viewHolder, float dX, float dY, int actionState, boolean isCurrentlyActive) {
         super.onChildDraw(c, recyclerView, viewHolder, dX, dY, actionState, isCurrentlyActive);
 
-        viewHolder.itemView.setTranslationX(0);
-        viewHolder.itemView.setTranslationY(dX*0.5f);
-
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP && actionState == ItemTouchHelper.ACTION_STATE_SWIPE) {
-            viewHolder.itemView.setElevation(0);
-        }
+        TaskAdapter.TaskViewHolder taskViewHolder = (TaskAdapter.TaskViewHolder) viewHolder;
 
 
 

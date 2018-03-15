@@ -33,7 +33,10 @@ public class HomeActivity extends AppCompatActivity {
         realm = Realm.getDefaultInstance();
 
 
-        RecyclerView.LayoutManager layoutManager = new LinearLayoutManager(this);
+        LinearLayoutManager layoutManager = new LinearLayoutManager(this);
+        layoutManager.setStackFromEnd(true);
+        layoutManager.setReverseLayout(true);
+
         TaskAdapter taskAdapter = new TaskAdapter(this, DbService.getListTasks(realm), realm);
         recyclerView.addItemDecoration(new DividerItemDecoration(this, DividerItemDecoration.VERTICAL));
         recyclerView.setLayoutManager(layoutManager);
