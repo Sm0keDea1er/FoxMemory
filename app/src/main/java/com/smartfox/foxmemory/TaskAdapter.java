@@ -1,6 +1,7 @@
 package com.smartfox.foxmemory;
 
 import android.content.Context;
+import android.databinding.DataBindingUtil;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
@@ -8,11 +9,11 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
+import com.smartfox.foxmemory.databinding.ListItemBinding;
 import com.smartfox.foxmemory.db.DbService;
 import com.smartfox.foxmemory.db.models.Task;
 import com.smartfox.foxmemory.touchhelper.ItemTouchHelperAdapter;
 
-import java.util.Calendar;
 import java.util.Collections;
 import java.util.List;
 
@@ -30,6 +31,7 @@ public class TaskAdapter extends RecyclerView.Adapter<TaskAdapter.TaskViewHolder
     private List<Task> tasks;
     private Realm realm;
 
+
     public TaskAdapter(Context context, List<Task> tasks, Realm realm) {
         this.context = context;
         this.tasks = tasks;
@@ -40,23 +42,16 @@ public class TaskAdapter extends RecyclerView.Adapter<TaskAdapter.TaskViewHolder
     @Override
     public TaskViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
 
-        View itemView = LayoutInflater.from(parent.getContext())
-                .inflate(R.layout.list_item, parent, false);
-        return new TaskViewHolder(itemView);
+        LayoutInflater inflater = LayoutInflater.from(parent.getContext());
+        ListItemBinding binding = ListItemBinding.inflate(inflater, parent, false);
+        return new TaskViewHolder(binding.getRoot());
     }
 
     @Override
     public void onBindViewHolder(@NonNull TaskViewHolder holder, int position) {
 
-        Calendar calendar = Calendar.getInstance();
-        Long time = tasks.get(position).getCreatedAt();
-        calendar.setTimeInMillis(time);
-
-
-        holder.id.setText(String.valueOf(calendar.get(Calendar.SECOND)));
-        holder.name.setText(tasks.get(position).getName());
-        holder.description.setText(tasks.get(position).getDescription());
-        holder.priority.setText(String.valueOf(tasks.get(position).getPriority()));
+        Task task = tasks.get(position);
+        holder.binding.setTask(task);
     }
 
 
@@ -117,17 +112,17 @@ public class TaskAdapter extends RecyclerView.Adapter<TaskAdapter.TaskViewHolder
 
     public class TaskViewHolder extends RecyclerView.ViewHolder {
 
+        ListItemBinding binding;
+
         TextView name, description, id, priority;
         public View line;
 
-        public TaskViewHolder(View itemView) {
-            super(itemView);
+        public TaskViewHolder(View v) {
+            super(v);
 
-            line = itemView.findViewById(R.id.item_line);
-            name = itemView.findViewById(R.id.item_name);
-            description = itemView.findViewById(R.id.item_description);
-            priority = itemView.findViewById(R.id.item_priority);
-            id = itemView.findViewById(R.id.item_id);
+            binding = DataBindingUtil.bind(v);
+
+            line = v.findViewById(R.id.item_line);
         }
 
     }
