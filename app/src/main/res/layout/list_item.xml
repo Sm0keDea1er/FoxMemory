@@ -82,7 +82,7 @@
 
         </LinearLayout>
 
-        android:textColor="@color/colorTextGray"
+
         <TextView
             android:id="@+id/item_priority"
             android:layout_width="56dp"
