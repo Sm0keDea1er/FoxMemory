@@ -41,6 +41,7 @@ public class HomeActivity extends AppCompatActivity {
         recyclerView.addItemDecoration(new DividerItemDecoration(this, DividerItemDecoration.VERTICAL));
         recyclerView.setLayoutManager(layoutManager);
         recyclerView.setAdapter(taskAdapter);
+//        recyclerView.getItemAnimator().setChangeDuration(0);
 
         ItemTouchHelper.Callback callback = new SimpleItemTouchHelperCallback(taskAdapter);
         ItemTouchHelper touchHelper = new ItemTouchHelper(callback);

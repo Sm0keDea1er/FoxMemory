@@ -82,15 +82,6 @@ public class SimpleItemTouchHelperCallback extends ItemTouchHelper.Callback {
             movedFlag = false;
             Log.d("SDS", "movedFlag ");
         }
-
-//        float alpha = viewHolder.itemView.getAlpha();
-//
-//        if (alpha > 0.9f && alpha != 1) {
-//            Log.d("SDS", "AlphaIs ");
-//            viewHolder.itemView.setAlpha(1);
-//            //TODO
-//        }
-
     }
 
     @Override
@@ -100,7 +91,7 @@ public class SimpleItemTouchHelperCallback extends ItemTouchHelper.Callback {
         if (dX > Resources.getSystem().getDisplayMetrics().widthPixels || dX < -Resources.getSystem().getDisplayMetrics().widthPixels) return;
         super.onChildDraw(c, recyclerView, viewHolder, dX, dY, actionState, isCurrentlyActive);
 
-        Log.d("SDS", String.valueOf(dX));
+//        Log.d("SDS", String.valueOf(dX));
 
 
         if (actionState == ItemTouchHelper.ACTION_STATE_SWIPE) {

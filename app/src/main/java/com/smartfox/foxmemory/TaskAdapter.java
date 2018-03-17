@@ -5,6 +5,7 @@ import android.content.res.Resources;
 import android.databinding.DataBindingUtil;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -112,7 +113,6 @@ public class TaskAdapter extends RecyclerView.Adapter<TaskAdapter.TaskViewHolder
             list.clear();
             list.addAll(tasks);
         });
-
     }
 
     @Override
@@ -126,10 +126,11 @@ public class TaskAdapter extends RecyclerView.Adapter<TaskAdapter.TaskViewHolder
     @Override
     public void complete(int position) {
 
-//        Log.d("SDS", "complete ");
-
+        Log.d("SDS", "complete ");
         realm.executeTransaction(realm1 -> {
-            tasks.get(position).setComplete(true);
+            Task task = tasks.get(position);
+            task.setComplete(true);
+            realm1.insertOrUpdate(task);
         });
         notifyItemChanged(position);
 
@@ -138,9 +139,11 @@ public class TaskAdapter extends RecyclerView.Adapter<TaskAdapter.TaskViewHolder
     @Override
     public void notComplete(int position) {
 
-//        Log.d("SDS", "notComplete ");
+        Log.d("SDS", "notComplete ");
         realm.executeTransaction(realm1 -> {
-            tasks.get(position).setComplete(false);
+            Task task = tasks.get(position);
+            task.setComplete(false);
+            realm1.insertOrUpdate(task);
         });
         notifyItemChanged(position);
     }
