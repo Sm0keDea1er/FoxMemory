@@ -1,9 +1,12 @@
 package com.smartfox.foxmemory.touchhelper;
 
+import android.content.res.Resources;
 import android.graphics.Canvas;
+import android.os.Build;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.helper.ItemTouchHelper;
 import android.util.Log;
+import android.view.View;
 
 import com.smartfox.foxmemory.TaskAdapter;
 
@@ -13,11 +16,11 @@ import com.smartfox.foxmemory.TaskAdapter;
 
 public class SimpleItemTouchHelperCallback extends ItemTouchHelper.Callback {
 
-    private final ItemTouchHelperAdapter mAdapter;
+    private final ItemTouchHelperAdapter adapter;
+    private boolean movedFlag = false;
 
-    public SimpleItemTouchHelperCallback(
-            ItemTouchHelperAdapter adapter) {
-        mAdapter = adapter;
+    public SimpleItemTouchHelperCallback(ItemTouchHelperAdapter adapter) {
+        this.adapter = adapter;
     }
 
     @Override
@@ -33,41 +36,40 @@ public class SimpleItemTouchHelperCallback extends ItemTouchHelper.Callback {
     @Override
     public int getMovementFlags(RecyclerView recyclerView, RecyclerView.ViewHolder viewHolder) {
 
-        // Set movement flags based on the layout manager
-        final int dragFlags = ItemTouchHelper.UP | ItemTouchHelper.DOWN;
-        final int swipeFlags = ItemTouchHelper.END | ItemTouchHelper.START;
-
-        return makeMovementFlags(dragFlags, swipeFlags);
+        return makeMovementFlags(
+                ItemTouchHelper.UP | ItemTouchHelper.DOWN,
+                ItemTouchHelper.END | ItemTouchHelper.START);
     }
 
     @Override
     public void onSwiped(RecyclerView.ViewHolder viewHolder, int direction) {
 
-        mAdapter.onItemDismiss(viewHolder.getAdapterPosition());
+        if (direction == 32) {
 
-        if (direction == 32){
-            Log.d("SDS","RIGHT");
-
-            viewHolder.itemView.animate().translationX(20).start();
-            viewHolder.itemView.setTranslationX(20);
+            adapter.complete(viewHolder.getAdapterPosition());
         }
+
         if (direction == 16) {
-            Log.d("SDS","LEFT");
 
-            viewHolder.itemView.animate().translationX(-20).start();
-            viewHolder.itemView.setTranslationX(-20);
+            if (!adapter.isComplete(viewHolder.getAdapterPosition())) {
+
+                adapter.onItemDismiss(viewHolder.getAdapterPosition());
+            } else {
+
+                adapter.notComplete(viewHolder.getAdapterPosition());
+            }
         }
-
     }
 
 
-
     @Override
-    public boolean onMove(RecyclerView recyclerView, RecyclerView.ViewHolder viewHolder, RecyclerView.ViewHolder target) {
+    public boolean onMove(RecyclerView recyclerView, RecyclerView.ViewHolder
+            viewHolder, RecyclerView.ViewHolder target) {
 
         int fromPosition = viewHolder.getAdapterPosition();
         int toPosition = target.getAdapterPosition();
-        mAdapter.onItemMove(fromPosition, toPosition);
+        adapter.onItemMove(fromPosition, toPosition);
+        movedFlag = true;
         return true;
     }
 
@@ -75,17 +77,68 @@ public class SimpleItemTouchHelperCallback extends ItemTouchHelper.Callback {
     public void clearView(RecyclerView recyclerView, RecyclerView.ViewHolder viewHolder) {
         super.clearView(recyclerView, viewHolder);
 
-        mAdapter.onItemMoved();
+        if (movedFlag) {
+            adapter.onItemMoved();
+            movedFlag = false;
+            Log.d("SDS", "movedFlag ");
+        }
+
+//        float alpha = viewHolder.itemView.getAlpha();
+//
+//        if (alpha > 0.9f && alpha != 1) {
+//            Log.d("SDS", "AlphaIs ");
+//            viewHolder.itemView.setAlpha(1);
+//            //TODO
+//        }
+
     }
 
     @Override
-    public void onChildDraw(Canvas c, RecyclerView recyclerView, RecyclerView.ViewHolder viewHolder, float dX, float dY, int actionState, boolean isCurrentlyActive) {
+    public void onChildDraw(Canvas c, RecyclerView recyclerView, RecyclerView.ViewHolder
+            viewHolder, float dX, float dY, int actionState, boolean isCurrentlyActive) {
+
+        if (dX > Resources.getSystem().getDisplayMetrics().widthPixels || dX < -Resources.getSystem().getDisplayMetrics().widthPixels) return;
         super.onChildDraw(c, recyclerView, viewHolder, dX, dY, actionState, isCurrentlyActive);
 
-        TaskAdapter.TaskViewHolder taskViewHolder = (TaskAdapter.TaskViewHolder) viewHolder;
+        Log.d("SDS", String.valueOf(dX));
 
 
+        if (actionState == ItemTouchHelper.ACTION_STATE_SWIPE) {
+            TaskAdapter.TaskViewHolder taskViewHolder = (TaskAdapter.TaskViewHolder) viewHolder;
+
+            boolean isComplete = adapter.isComplete(viewHolder.getAdapterPosition());
 
 
+            if (isComplete && dX < 0) {
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+                    taskViewHolder.itemView.setElevation(0);
+                }
+                taskViewHolder.itemView.setTranslationX(0);
+
+                taskViewHolder.line.setScaleX(taskViewHolder.itemView.getWidth() + dX);
+                if (dX < viewHolder.itemView.getWidth())
+                    taskViewHolder.linearLayout.setAlpha(0.4f + (-dX / taskViewHolder.itemView.getWidth()) * (1 - 0.4f));
+
+
+            } else if (!isComplete && dX > 0) {
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+                    taskViewHolder.itemView.setElevation(0);
+                }
+                taskViewHolder.itemView.setTranslationX(0);
+
+                taskViewHolder.line.setVisibility(View.VISIBLE);
+                taskViewHolder.line.setScaleX(dX);
+                if (dX < viewHolder.itemView.getWidth())
+                    taskViewHolder.linearLayout.setAlpha(1 - (dX / taskViewHolder.itemView.getWidth()) * (1 - 0.4f));
+
+
+            }else if (isComplete && dX > 0){
+
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+                    taskViewHolder.itemView.setElevation(0);
+                }
+                taskViewHolder.itemView.setTranslationX(0);
+            }
+        }
     }
 }

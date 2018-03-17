@@ -6,9 +6,16 @@ package com.smartfox.foxmemory.touchhelper;
 
 public interface ItemTouchHelperAdapter {
 
-    boolean onItemMove(int fromPosition, int toPosition);
+    void onItemMove(int fromPosition, int toPosition);
 
     void onItemDismiss(int position);
 
     void onItemMoved();
+
+    boolean isComplete(int position);
+
+    void complete(int position);
+
+    void notComplete(int position);
+
 }

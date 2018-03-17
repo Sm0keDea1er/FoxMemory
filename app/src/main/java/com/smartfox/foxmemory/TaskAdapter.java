@@ -1,13 +1,14 @@
 package com.smartfox.foxmemory;
 
 import android.content.Context;
+import android.content.res.Resources;
 import android.databinding.DataBindingUtil;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.TextView;
+import android.widget.LinearLayout;
 
 import com.smartfox.foxmemory.databinding.ListItemBinding;
 import com.smartfox.foxmemory.db.DbService;
@@ -52,6 +53,19 @@ public class TaskAdapter extends RecyclerView.Adapter<TaskAdapter.TaskViewHolder
 
         Task task = tasks.get(position);
         holder.binding.setTask(task);
+
+        if (task.isComplete()) {
+
+            holder.line.setVisibility(View.VISIBLE);
+            holder.line.setScaleX(Resources.getSystem().getDisplayMetrics().widthPixels);
+            holder.linearLayout.setAlpha(0.4f);
+
+        } else if (!task.isComplete()) {
+
+            holder.line.setVisibility(View.INVISIBLE);
+            holder.line.setScaleX(1);
+            holder.linearLayout.setAlpha(1);
+        }
     }
 
 
@@ -61,7 +75,7 @@ public class TaskAdapter extends RecyclerView.Adapter<TaskAdapter.TaskViewHolder
     }
 
     @Override
-    public boolean onItemMove(int fromPosition, int toPosition) {
+    public void onItemMove(int fromPosition, int toPosition) {
 
         if (fromPosition < toPosition) {
             for (int i = fromPosition; i < toPosition; i++) {
@@ -74,7 +88,6 @@ public class TaskAdapter extends RecyclerView.Adapter<TaskAdapter.TaskViewHolder
         }
 
         notifyItemMoved(fromPosition, toPosition);
-        return true;
     }
 
     @Override
@@ -98,10 +111,39 @@ public class TaskAdapter extends RecyclerView.Adapter<TaskAdapter.TaskViewHolder
             RealmList<Task> list = DbService.onlyOneList(realm);
             list.clear();
             list.addAll(tasks);
-    });
+        });
 
     }
 
+    @Override
+    public boolean isComplete(int position) {
+
+        if (position == -1) return false;
+
+        return tasks.get(position).isComplete();
+    }
+
+    @Override
+    public void complete(int position) {
+
+//        Log.d("SDS", "complete ");
+
+        realm.executeTransaction(realm1 -> {
+            tasks.get(position).setComplete(true);
+        });
+        notifyItemChanged(position);
+
+    }
+
+    @Override
+    public void notComplete(int position) {
+
+//        Log.d("SDS", "notComplete ");
+        realm.executeTransaction(realm1 -> {
+            tasks.get(position).setComplete(false);
+        });
+        notifyItemChanged(position);
+    }
 
 
     public void addTask(Task task) {
@@ -113,9 +155,8 @@ public class TaskAdapter extends RecyclerView.Adapter<TaskAdapter.TaskViewHolder
     public class TaskViewHolder extends RecyclerView.ViewHolder {
 
         ListItemBinding binding;
-
-        TextView name, description, id, priority;
         public View line;
+        public LinearLayout linearLayout;
 
         public TaskViewHolder(View v) {
             super(v);
@@ -123,6 +164,8 @@ public class TaskAdapter extends RecyclerView.Adapter<TaskAdapter.TaskViewHolder
             binding = DataBindingUtil.bind(v);
 
             line = v.findViewById(R.id.item_line);
+            linearLayout = v.findViewById(R.id.item_layout);
+            line.setPivotX(0);
         }
 
     }

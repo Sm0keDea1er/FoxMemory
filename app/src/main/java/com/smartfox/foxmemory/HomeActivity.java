@@ -51,7 +51,7 @@ public class HomeActivity extends AppCompatActivity {
             DbService.save(realm);
             Task task = realm.where(Task.class).findAll().sort(Task.CREATED_AT, Sort.DESCENDING).first();
             taskAdapter.addTask(task);
-            layoutManager.smoothScrollToPosition(recyclerView, null, taskAdapter.getItemCount() - 1);
+//            layoutManager.smoothScrollToPosition(recyclerView, null, taskAdapter.getItemCount() - 1);
         });
     }
 

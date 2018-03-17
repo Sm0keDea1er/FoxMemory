@@ -1,7 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 
 
-<layout>
+<layout xmlns:tools="http://schemas.android.com/tools"
+    xmlns:android="http://schemas.android.com/apk/res/android">
 
     <data>
 
@@ -12,8 +13,13 @@
 
     </data>
 
+<FrameLayout
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:background="#f1f1f1">
 
-    <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    <LinearLayout
+        android:id="@+id/item_layout"
         android:layout_width="match_parent"
         android:layout_height="60dp"
         android:background="#f1f1f1"
@@ -21,31 +27,37 @@
 
         <LinearLayout
 
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center_vertical"
+            android:layout_width="0dp"
+            android:layout_weight="1"
+            android:layout_height="match_parent"
+
+            android:gravity="center_vertical"
             android:orientation="vertical"
+
             android:paddingLeft="16dp"
-            android:paddingStart="16dp">
+            android:paddingStart="16dp"
+            tools:ignore="RtlSymmetry">
 
 
             <RelativeLayout
                 android:layout_width="wrap_content"
-                android:layout_height="wrap_content">
+                android:layout_height="wrap_content"
+                android:gravity="center_vertical">
 
                 <TextView
 
                     android:id="@+id/item_name"
-                    android:layout_width="wrap_content"
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:text="@{task.name}"
+                    tools:text="name"
                     android:textColor="@color/colorTextBlack"
                     android:textSize="16sp" />
 
                 <View
                     android:id="@+id/item_line"
-                    android:layout_width="0dp"
-                    android:layout_height="2dp"
+                    android:layout_width="1px"
+                    android:layout_height="1dp"
                     android:layout_alignParentLeft="true"
                     android:layout_alignParentStart="true"
                     android:layout_centerVertical="true"
@@ -60,37 +72,47 @@
                 android:id="@+id/item_description"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+
                 android:layout_marginLeft="8dp"
                 android:layout_marginStart="8dp"
+
                 android:text="@{task.description}"
+                tools:text="description"
                 android:textColor="@color/colorTextGray" />
 
         </LinearLayout>
 
+        android:textColor="@color/colorTextGray"
         <TextView
             android:id="@+id/item_priority"
-            android:layout_width="0dp"
+            android:layout_width="56dp"
             android:layout_height="match_parent"
-            android:layout_weight="1"
             android:gravity="end|center_vertical"
-            android:paddingEnd="16dp"
-            android:paddingRight="16dp"
+
+            android:paddingEnd="8dp"
+            android:paddingRight="8dp"
+            tools:ignore="RtlSymmetry"
+
+            android:textColor="@color/colorTextGray"
             android:text="@{Integer.toString(task.priority)}"
-            android:textColor="@color/colorTextGray" />
+            tools:text="prior"/>
 
         <TextView
             android:id="@+id/item_seconds"
-            android:layout_width="0dp"
+            android:layout_width="56dp"
             android:layout_height="match_parent"
-            android:layout_weight="1"
             android:gravity="end|center_vertical"
+
             android:paddingEnd="16dp"
             android:paddingRight="16dp"
+
             android:text="@{Utils.getSeconds(task.createdAt)}"
-            android:textColor="@color/colorTextGray" />
-
-
+            tools:text="time"
+            android:textColor="@color/colorTextGray"
+            tools:ignore="RtlSymmetry" />
     </LinearLayout>
+</FrameLayout>
+
 </layout>
 
 
